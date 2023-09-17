@@ -1,64 +1,50 @@
-import { useSelector } from "react-redux";
+import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 
 function Admin() {
+    const dispatch = useDispatch();
+    const orderList = useSelector(store => store.orderList);
 
-  function time() {
-    
-    var currentdate = new Date(); 
-    var timenow = 
-                + currentdate.getMonth() + "/"
-                + currentdate.getDate() + "/"
-                + currentdate.getFullYear() + " at "
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() 
-              
-      document.getElementById("datebtn").innerHTML = "time is "+timenow;
+    const fetchOrders = () => {
+        axios.get('/api/order').then((response) => {
+            dispatch({ type: 'FETCH_ORDERS', payload: response.data});
+        }).catch((error) => {
+            console.log('Error fetching orders' , error);
+        });
     }
 
-  return (
-    <div>
-      <h1>Super Admin</h1>
-      <p id="datebtn">time is </p>
-      <button type="button" onClick= {time} >click to show the time</button>
-    
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Time Order Placed</th>
-          <th>Type</th>
-          <th>Cost</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Lucas</td>
-          <td>Date</td>
-          <td>Pickup</td>
-          <td>$15</td>
-        </tr>
-        <tr>
-          <td>Lucas</td>
-          <td>Date</td>
-          <td>Pickup</td>
-          <td>$15</td>
-        </tr>
-        <tr>
-          <td>Lucas</td>
-          <td>Date</td>
-          <td>Pickup</td>
-          <td>$15</td>
-        </tr>
-        <tr>
-          <td>Lucas</td>
-          <td>Date</td>
-          <td>Pickup</td>
-          <td>$15</td>
-        </tr>
-      </tbody>
-    </table>
-    </div>
-  );
+    useEffect(() => {
+        fetchOrders();
+    }, []);
+
+    return (
+        <div>
+            <table id='orders'>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        orderList.map((order) => (
+                            <tr key={order.id}>
+                                <td>{order.customer_name}</td>
+                                <td>{order.time}</td>
+                                <td>{order.type}</td>
+                                <td>{order.total}</td>
+                            </tr>
+                        ))
+                    }
+                </tbody>
+            </table>
+        </div>
+    );
 }
 
 export default Admin;
