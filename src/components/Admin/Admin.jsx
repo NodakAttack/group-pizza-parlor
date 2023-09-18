@@ -5,11 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 
 function Admin() {
     const dispatch = useDispatch();
-    const orderList = useSelector(store => store.orderList);
+    const orderList = useSelector(store => store.order);
 
     const fetchOrders = () => {
         axios.get('/api/order').then((response) => {
-            dispatch({ type: 'FETCH_ORDERS', payload: response.data});
+            dispatch({ type: 'SET_ORDER', payload: response.data});
         }).catch((error) => {
             console.log('Error fetching orders' , error);
         });
